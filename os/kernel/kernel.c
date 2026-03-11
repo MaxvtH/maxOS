@@ -1,6 +1,7 @@
 #include "kernel.h"
+#include "idt.h"
+#include "keyboard.h"
 
-// Current cursor position
 int cursor = 0;
 
 void clear_screen() {
@@ -12,25 +13,43 @@ void clear_screen() {
     cursor = 0;
 }
 
+void print_char(char c) {
+    char* vga = (char*) VGA_ADDRESS;
+    vga[cursor * 2]     = c;
+    vga[cursor * 2 + 1] = VGA_WHITE_ON_BLACK;
+    cursor++;
+}
+
 void newline() {
-	cursor = ((cursor / SCREEN_WIDTH) + 1) * SCREEN_WIDTH;
+    cursor = ((cursor / SCREEN_WIDTH) + 1) * SCREEN_WIDTH;
+}
+
+void backspace() {
+    if (cursor <= 0) return;        // don't go before start
+    cursor--;
+    char* vga = (char*) VGA_ADDRESS;
+    vga[cursor * 2]     = ' ';     // clear the character
+    vga[cursor * 2 + 1] = VGA_WHITE_ON_BLACK;
 }
 
 void print(const char* str) {
-    char* vga = (char*) VGA_ADDRESS;
     int i = 0;
     while (str[i] != '\0') {
-        vga[cursor * 2]     = str[i];
-        vga[cursor * 2 + 1] = VGA_WHITE_ON_BLACK;
-        cursor++;
+        print_char(str[i]);
         i++;
     }
 }
 
 void kernel_main() {
     clear_screen();
-    print("Kernel loaded succesfully.");
-    newline();
     print("Welcome to maxOS!");
     newline();
+    print("> ");
+
+    idt_init();
+    keyboard_init();
+
+    while (1) {
+        __asm__ volatile ("hlt");
+    }
 }

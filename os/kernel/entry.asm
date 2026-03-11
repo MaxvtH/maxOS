@@ -1,9 +1,17 @@
 BITS 32
 
 global _start
-extern kernel_main      ; tell the linker kernel_main is in another file
+global keyboard_isr
+extern kernel_main
+extern keyboard_handler
 
 _start:
-    mov esp, 0x90000    ; set up stack
-    call kernel_main    ; call our C kernel
-    jmp $               ; hang if kernel returns
+    mov esp, 0x90000
+    call kernel_main
+    jmp $
+
+keyboard_isr:
+    pusha
+    call keyboard_handler
+    popa
+    iret
