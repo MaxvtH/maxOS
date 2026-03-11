@@ -1,0 +1,20 @@
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt update && apt install -y \
+    nasm \
+    qemu-system-x86 \
+    make \
+    gdb \
+    gcc \
+    binutils \
+    xorriso \
+    grub-pc-bin \
+    vim \
+    nano \
+    bsdextrautils \
+    git \
+    && apt clean
+
+WORKDIR /work

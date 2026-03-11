@@ -1,0 +1,13 @@
+all: os.bin
+
+bootloader.bin: bootloader.asm
+	nasm -f bin bootloader.asm -o bootloader.bin
+
+kernel.bin: kernel.asm
+	nasm -f bin kernel.asm -o kernel.bin
+
+os.bin: bootloader.bin kernel.bin
+	cat bootloader.bin kernel.bin > os.bin
+
+clean:
+	rm -f *.bin
