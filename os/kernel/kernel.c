@@ -20,6 +20,10 @@ void print_char(char c) {
     cursor++;
 }
 
+void newline() {
+    cursor = ((cursor / SCREEN_WIDTH) + 1) * SCREEN_WIDTH;
+}
+
 void backspace() {
     if (cursor <= 0) return;        // don't go before start
     cursor--;
@@ -36,15 +40,11 @@ void print(const char* str) {
     }
 }
 
-void newline() {
-    cursor = ((cursor / SCREEN_WIDTH) + 1) * SCREEN_WIDTH;
-    print("> ");
-}
-
 void kernel_main() {
     clear_screen();
     print("Welcome to maxOS!");
     newline();
+    print("> ");
 
     idt_init();
     keyboard_init();
